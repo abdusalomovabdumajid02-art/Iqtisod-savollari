@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kunlik iqtisodiyot savoli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f6;--ink:#10272e;--muted:#5b6f76;--line:#cfdadd;--card:#fff;--teal:#0f5c6e;--gold:#e0a100;--ok:#1d7a4d;--bad:#b3362b;--okbg:#e4f3ea;--badbg:#f8e6e3}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1b20;--ink:#e8f0f2;--muted:#9bb0b7;--line:#274048;--card:#13272e;--teal:#5fc0d6;--ok:#58c58c;--bad:#f0877d;--okbg:#14382a;--badbg:#3d1f1c}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 "IBM Plex Sans",system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:28px 16px 48px}
+main{width:100%;max-width:580px}
+.day{color:var(--muted);font-size:15px;margin:0 0 6px}
+h1{font:700 30px/1.2 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 22px;letter-spacing:-.01em}
+.q{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:6px;padding:20px 18px;margin-bottom:18px}
+.q p{margin:0;font-weight:500;font-size:19px}
+label.f{display:block;font-size:15px;color:var(--muted);margin:0 0 6px}
+input[type=text],input[type=password],textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;margin-bottom:16px}
+textarea{min-height:110px;resize:vertical}
+.opts{display:grid;gap:10px;margin-bottom:18px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border:1.5px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.opt b{font-family:"Bricolage Grotesque",sans-serif;color:var(--teal);min-width:1.2em}
+.opt[aria-checked=true]{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+button.go,button.sm{border:0;border-radius:6px;background:var(--teal);color:#fff;font:600 16px "IBM Plex Sans",sans-serif;cursor:pointer}
+button.go{width:100%;padding:14px;font-size:17px}
+button.sm{padding:10px 14px}
+button.sec{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+button.del{background:transparent;color:var(--bad);border:1.5px solid var(--bad)}
+@media (prefers-color-scheme:dark){button.go,button.sm:not(.sec):not(.del){color:#08181d}}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.res{margin-top:18px;padding:16px;border-radius:6px;border:1px solid var(--line);background:var(--card)}
+.res.ok{border-color:var(--ok)}.res.bad{border-color:var(--bad)}
+.res h2{margin:0 0 6px;font:700 20px "Bricolage Grotesque",sans-serif}
+.res p{margin:0}
+.note{margin-top:12px;font-size:15px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.row>*{flex:1}
+.bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0;display:flex;gap:10px;flex-wrap:wrap}
+.qn{margin:0 0 14px;font-weight:500;font-size:18px}
+.ex{margin:14px 0 0;padding:10px 12px;border-left:4px solid var(--teal);background:var(--bg);font-size:16px;color:var(--muted)}
+.card .opts{margin-bottom:0}.card textarea{margin-bottom:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ============ QATNASHCHI ============ -->
+<section id="user">
+  <p class="day" id="day"></p>
+  <h1 id="title">Bugungi iqtisodiyot savollari</h1>
+  <p class="note" id="prog" aria-live="polite">Yuklanmoqda...</p>
+  <div id="form" hidden>
+    <label class="f" for="name">Ismingiz</label>
+    <input type="text" id="name" autocomplete="name" placeholder="Masalan, Aziza Karimova" maxlength="60">
+    <div id="qs"></div>
+    <button class="go" id="send" disabled>Javoblarni yuborish</button>
+  </div>
+  <div class="res" id="res" hidden aria-live="polite"></div>
+  <p class="note" id="note"></p>
+</section>
+
+<!-- ============ ADMIN ============ -->
+<section id="admin" hidden>
+  <h1>Savollarni boshqarish</h1>
+  <div id="login">
+    <label class="f" for="pw">Admin paroli</label>
+    <input type="password" id="pw" autocomplete="current-password">
+    <button class="go" id="loginbtn">Kirish</button>
+    <p class="note" id="loginmsg"></p>
+  </div>
+  <div id="panel" hidden>
+    <p class="note">Savollar har kuni navbat bilan almashadi. Tartib shu ro'yxat bo'yicha.</p>
+    <div id="list"></div>
+    <div class="bar">
+      <button class="sm sec" id="addmcq">+ Variantli savol</button>
+      <button class="sm sec" id="addopen">+ Ochiq savol</button>
+      <button class="sm" id="savebtn">Saqlash</button>
+    </div>
+    <p class="note" id="adminmsg" aria-live="polite"></p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ===== SOZLAMA: Worker manzilini shu yerga qo'ying ===== */
+const ENDPOINT = "https://SIZNING-WORKER.workers.dev";
+
+/* Worker'da savol bo'lmasa, shular ishlatiladi.
+   t: "mcq" (variantli) yoki "open" (ochiq); o: variantlar; a: to'g'ri javob indeksi; e: izoh / namuna javob */
+const DEFAULTS = [
+ {t:"mcq",q:"Inflyatsiya nima?",o:["Narxlarning umumiy darajasi davomli oshishi","Ishsizlik darajasining kamayishi","Milliy valyutaning mustahkamlanishi","Davlat byudjeti profitsiti"],a:0,e:"Inflyatsiya — tovar va xizmatlar narxlari umumiy darajasining uzoq muddat oshib borishi, shu sababli pulning xarid qobiliyati pasayadi."},
+ {t:"mcq",q:"Talab qonuniga ko'ra, boshqa sharoitlar teng bo'lganda narx oshsa nima bo'ladi?",o:["Talab miqdori oshadi","Talab miqdori kamayadi","Taklif kamayadi","Hech narsa o'zgarmaydi"],a:1,e:"Narx oshganda xaridorlar kamroq sotib oladi, ya'ni talab qilingan miqdor kamayadi."},
+ {t:"open",q:"O'z so'zlaringiz bilan tushuntiring: nima uchun narxlar oshganda pulning xarid qobiliyati pasayadi?",o:[],a:0,e:"Namuna javob: bir xil pulga avvalgidan kamroq tovar olish mumkin bo'lib qoladi, shuning uchun pulning qadri tushadi."},
+ {t:"mcq",q:"YaIM (yalpi ichki mahsulot) nimani ifodalaydi?",o:["Davlat qarzining umumiy summasi","Aholi jon boshiga olinadigan oylik","Mamlakat hududida bir yilda ishlab chiqarilgan yakuniy tovar va xizmatlar bozor qiymati","Eksport va import farqi"],a:2,e:"YaIM — ma'lum davrda mamlakat ichida ishlab chiqarilgan barcha yakuniy tovar va xizmatlarning umumiy bozor qiymati."},
+ {t:"mcq",q:"Milliy valyutaning chet el valyutasiga nisbatan qadrsizlanishi qanday ataladi?",o:["Revalvatsiya","Deflyatsiya","Emissiya","Devalvatsiya"],a:3,e:"Milliy valyuta kursining chet el valyutasiga nisbatan pasayishi devalvatsiya (qadrsizlanish) deyiladi."},
+ {t:"mcq",q:"Markaziy bankning asosiy vazifalaridan biri qaysi?",o:["Soliq undirish","Narx barqarorligi uchun pul-kredit siyosatini yuritish","Davlat xizmatchilariga maosh to'lash","Tovarlar ishlab chiqarish"],a:1,e:"Markaziy bank asosan narx barqarorligini ta'minlaydi va pul-kredit siyosatini olib boradi."},
+ {t:"open",q:"Muqobil xarajat (alternativ qiymat) nima? Hayotdan bitta misol keltiring.",o:[],a:0,e:"Namuna javob: biror tanlovni qilganda voz kechilgan eng yaxshi boshqa imkoniyatning qiymati. Masalan, kechqurun dars qilish o'rniga ishlashni tanlasangiz, darsning foydasi muqobil xarajat bo'ladi."},
+ {t:"mcq",q:"Taklif qonuniga ko'ra, boshqa sharoitlar teng bo'lganda narx oshsa taklif miqdori nima bo'ladi?",o:["Kamayadi","Oshadi","O'zgarmaydi","Nolga tushadi"],a:1,e:"Narx oshganda ishlab chiqaruvchilar ko'proq sotishdan foyda ko'radi, shuning uchun taklif miqdori oshadi."},
+ {t:"mcq",q:"Bozor muvozanat narxi qanday aniqlanadi?",o:["Davlat belgilaydi","Talab va taklif egri chiziqlari kesishgan nuqtada","Faqat eng past narx bo'yicha","Faqat ishlab chiqarish xarajati bo'yicha"],a:1,e:"Muvozanat narxda talab qilingan miqdor taklif qilingan miqdorga teng bo'ladi."},
+ {t:"mcq",q:"Ishsizlikning qaysi turi iqtisodiy tanazzul bilan bog'liq?",o:["Friksion","Tarkibiy","Tsiklik","Mavsumiy"],a:2,e:"Tsiklik ishsizlik iqtisodiy pasayish davrida ishlab chiqarish qisqargani uchun ish o'rinlari kamayishidan kelib chiqadi."},
+ {t:"mcq",q:"Davlat byudjeti defitsiti qachon yuzaga keladi?",o:["Daromadlar xarajatlardan ko'p bo'lsa","Xarajatlar daromadlardan ko'p bo'lsa","Eksport importdan ko'p bo'lsa","Soliqlar bekor qilinsa"],a:1,e:"Byudjet defitsiti — davlat xarajatlari uning daromadlaridan oshib ketgan holat."},
+ {t:"open",q:"Nima uchun raqobat iste'molchilar uchun foydali? Qisqacha tushuntiring.",o:[],a:0,e:"Namuna javob: raqobat sotuvchilarni narxni pasaytirishga, sifatni oshirishga va yangi mahsulot chiqarishga majbur qiladi, iste'molchi esa tanlash imkoniga ega bo'ladi."},
+ {t:"mcq",q:"Quyidagilardan qaysi biri to'g'ridan-to'g'ri soliqqa kiradi?",o:["Qo'shilgan qiymat solig'i (QQS)","Aksiz solig'i","Jismoniy shaxslardan olinadigan daromad solig'i","Bojxona boji"],a:2,e:"To'g'ridan-to'g'ri soliq daromad egasidan bevosita olinadi (masalan, daromad solig'i). QQS va aksiz esa bilvosita soliqlar."},
+ {t:"mcq",q:"Eksport nima?",o:["Chet eldan tovar olib kirish","Mamlakatdan tashqariga tovar va xizmat sotish","Valyutani almashtirish","Soliqning bir turi"],a:1,e:"Eksport — ichki ishlab chiqarilgan tovar va xizmatlarni chet elga sotish."},
+ {t:"open",q:"Sizningcha, yoshlar uchun moliyaviy savodxonlik nima uchun muhim? Bitta aniq misol keltiring.",o:[],a:0,e:"Namuna javob: moliyaviy savodxonlik daromadni rejalashtirish, jamg'arish va qarzdan to'g'ri foydalanishga yordam beradi. Masalan, stipendiyaning bir qismini oylik byudjetga bo'lib, favqulodda holat uchun jamg'arma yig'ish mumkin."}
+
+];
+
+const L = ["A","B","C","D","E","F"];
+const $ = id => document.getElementById(id);
+const months = ["yanvar","fevral","mart","aprel","may","iyun","iyul","avgust","sentabr","oktabr","noyabr","dekabr"];
+
+/* ---------- Yordamchi ---------- */
+function el(tag, props, ...kids){
+  const e = document.createElement(tag);
+  Object.assign(e, props||{});
+  kids.forEach(k => e.append(k));
+  return e;
+}
+async function api(path, opt){
+  const r = await fetch(ENDPOINT + path, opt);
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+/* ---------- Sahifa tanlash ---------- */
+if(location.hash === "#admin") initAdmin(); else initUser();
+
+/* =========================== QATNASHCHI =========================== */
+const PER_DAY = 15;
+async function initUser(){
+  const d = new Date();
+  const dateKey = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  $("day").textContent = d.getDate()+" "+months[d.getMonth()]+" "+d.getFullYear();
+
+  let list = [];
+  try { list = await api("/questions"); } catch(e){}
+  if(!Array.isArray(list) || !list.length) list = DEFAULTS;
+
+  const N = list.length, per = Math.min(PER_DAY, N);
+  const dayNum = Math.floor((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - new Date(2026,0,1)) / 864e5);
+  const start = (((dayNum * per) % N) + N) % N;
+  const Qs = []; for(let k=0;k<per;k++) Qs.push(list[(start+k)%N]);
+
+  $("title").textContent = "Bugungi "+per+" ta savol";
+  $("form").hidden = false;
+
+  const ans = Qs.map(()=>null);
+  const optEls = [], tas = [], exs = [];
+  const box = $("qs");
+
+  function answered(i){ return Qs[i].t==="open" ? (ans[i]||"").trim().length>=2 : ans[i]!==null; }
+  function refresh(){
+    const n = Qs.filter((_,i)=>answered(i)).length;
+    $("prog").textContent = n+" / "+per+" savolga javob berildi";
+    $("send").disabled = n < per;
+  }
+
+  Qs.forEach((Q,i)=>{
+    const card = el("div",{className:"card"}, el("p",{className:"qn",textContent:(i+1)+". "+Q.q}));
+    if(Q.t==="open"){
+      const ta = el("textarea",{maxLength:1500,placeholder:"Javobingizni shu yerga yozing"});
+      ta.setAttribute("aria-label",(i+1)+"-savolga javob");
+      ta.oninput = () => { ans[i] = ta.value; refresh(); };
+      tas[i] = ta; card.append(ta);
+    } else {
+      const wrap = el("div",{className:"opts"}); wrap.setAttribute("role","radiogroup");
+      optEls[i] = Q.o.map((t,j)=>{
+        const b = el("button",{type:"button",className:"opt"}, el("b",{textContent:L[j]}), el("span",{textContent:t}));
+        b.setAttribute("role","radio"); b.setAttribute("aria-checked","false");
+        b.onclick = () => { ans[i]=j; optEls[i].forEach((c,k)=>c.setAttribute("aria-checked",k===j)); refresh(); };
+        wrap.append(b); return b;
+      });
+      card.append(wrap);
+    }
+    const ex = el("p",{className:"ex"}); ex.hidden = true; exs[i] = ex; card.append(ex);
+    box.append(card);
+  });
+  refresh();
+
+  function showResults(a){
+    let score = 0, mc = 0;
+    Qs.forEach((Q,i)=>{
+      if(Q.t==="open"){ tas[i].value = a[i]||""; tas[i].disabled = true; }
+      else {
+        mc++; if(a[i]===Q.a) score++;
+        optEls[i].forEach((b,j)=>{ b.disabled = true; b.setAttribute("aria-checked", j===a[i]); if(j===Q.a) b.classList.add("ok"); else if(j===a[i]) b.classList.add("bad"); });
+      }
+      exs[i].textContent = Q.e || ""; exs[i].hidden = !Q.e;
+    });
+    $("name").disabled = true; $("send").hidden = true; $("prog").hidden = true;
+    const r = $("res"); r.hidden = false; r.className = "res";
+    r.replaceChildren(
+      el("h2",{textContent: mc ? "Natija: "+score+" / "+mc+" to'g'ri" : "Javoblaringiz qabul qilindi"}),
+      el("p",{textContent: "Ochiq savollarga namuna javoblar har bir savol ostida ko'rsatilgan."})
+    );
+    $("note").textContent = "Javoblaringiz yuborildi. Ertaga yangi savollar bo'ladi.";
+    scrollTo(0,0);
+  }
+
+  try{
+    const prev = JSON.parse(localStorage.getItem("daily-"+dateKey)||"null");
+    if(prev && Array.isArray(prev.ans) && prev.ans.length===per){ showResults(prev.ans); return; }
+  }catch(e){}
+
+  $("send").onclick = async () => {
+    const btn = $("send"); btn.disabled = true; btn.textContent = "Yuborilmoqda...";
+    let score = 0, mc = 0;
+    const items = Qs.map((Q,i)=>{
+      if(Q.t==="open") return {q:Q.q, a:ans[i].trim(), c:null};
+      mc++; const ok = ans[i]===Q.a; if(ok) score++;
+      return {q:Q.q, a:L[ans[i]]+") "+Q.o[ans[i]], c:ok};
+    });
+    const payload = {name:$("name").value.trim()||"Noma'lum", date:dateKey, score, total:mc, items};
+    try{
+      await api("/answer",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      try{ localStorage.setItem("daily-"+dateKey, JSON.stringify({ans})); }catch(e){}
+      showResults(ans);
+    }catch(e){
+      btn.disabled = false; btn.textContent = "Javoblarni yuborish";
+      $("note").textContent = "Yuborib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.";
+    }
+  };
+}
+
+/* =========================== ADMIN =========================== */
+function initAdmin(){
+  $("user").hidden = true; $("admin").hidden = false;
+  document.title = "Admin — savollar";
+  let pass = sessionStorage.getItem("adm") || "";
+  let data = [];
+
+  async function tryLogin(p){
+    try{
+      const r = await api("/auth",{method:"POST",headers:{"X-Admin":p}});
+      if(!r.ok) throw 0;
+      pass = p; sessionStorage.setItem("adm", p);
+      let l = []; try{ l = await api("/questions"); }catch(e){}
+      data = (Array.isArray(l) && l.length) ? l : JSON.parse(JSON.stringify(DEFAULTS));
+      $("login").hidden = true; $("panel").hidden = false; render();
+    }catch(e){ $("loginmsg").textContent = "Parol noto'g'ri yoki Worker ishlamayapti."; }
+  }
+  $("loginbtn").onclick = () => tryLogin($("pw").value);
+  $("pw").onkeydown = e => { if(e.key==="Enter") tryLogin($("pw").value); };
+  if(pass) tryLogin(pass);
+
+  function render(){
+    const box = $("list"); box.replaceChildren();
+    data.forEach((q,i)=>{
+      const open = q.t === "open";
+      const ta = el("textarea",{value:q.q,placeholder:"Savol matni"}); ta.style.minHeight="70px";
+      ta.oninput = () => q.q = ta.value;
+      const card = el("div",{className:"card"},
+        el("label",{className:"f",textContent:(i+1)+". "+(open?"Ochiq savol":"Variantli savol")}), ta);
+
+      if(!open){
+        const ot = el("textarea",{value:q.o.join("\n"),placeholder:"Variantlar, har biri yangi qatorda"});
+        ot.oninput = () => { q.o = ot.value.split("\n").map(s=>s.trim()).filter(Boolean); fillSel(); };
+        const sel = el("select");
+        function fillSel(){
+          sel.replaceChildren();
+          q.o.forEach((_,j)=> sel.append(el("option",{value:j,textContent:"To'g'ri javob: "+L[j]})));
+          sel.value = Math.min(q.a, Math.max(q.o.length-1,0)); q.a = +sel.value || 0;
+        }
+        sel.onchange = () => q.a = +sel.value;
+        fillSel();
+        card.append(el("label",{className:"f",textContent:"Variantlar"}), ot, sel);
+      }
+      const ex = el("textarea",{value:q.e||"",placeholder: open ? "Namuna javob (javobdan keyin ko'rsatiladi)" : "Izoh (javobdan keyin ko'rsatiladi)"});
+      ex.style.minHeight="70px"; ex.oninput = () => q.e = ex.value;
+      const up = el("button",{className:"sm sec",type:"button",textContent:"Yuqoriga"});
+      up.disabled = i===0; up.onclick = () => { [data[i-1],data[i]]=[data[i],data[i-1]]; render(); };
+      const rm = el("button",{className:"sm del",type:"button",textContent:"O'chirish"});
+      rm.onclick = () => { if(confirm("Bu savol o'chirilsinmi?")){ data.splice(i,1); render(); } };
+      card.append(ex, el("div",{className:"row"}, up, rm));
+      box.append(card);
+    });
+  }
+
+  $("addmcq").onclick = () => { data.push({t:"mcq",q:"",o:["",""].filter(Boolean),a:0,e:""}); data[data.length-1].o=["Variant 1","Variant 2"]; render(); scrollTo(0,document.body.scrollHeight); };
+  $("addopen").onclick = () => { data.push({t:"open",q:"",o:[],a:0,e:""}); render(); scrollTo(0,document.body.scrollHeight); };
+
+  $("savebtn").onclick = async () => {
+    const clean = data.filter(q => q.q.trim() && (q.t==="open" || q.o.length>=2));
+    const msg = $("adminmsg");
+    try{
+      await api("/questions",{method:"POST",headers:{"Content-Type":"application/json","X-Admin":pass},body:JSON.stringify(clean)});
+      data = clean; render();
+      msg.textContent = "Saqlandi: "+clean.length+" ta savol. Bo'sh yoki to'liq bo'lmagan savollar olib tashlandi.";
+    }catch(e){ msg.textContent = "Saqlab bo'lmadi. Parol yoki Worker sozlamasini tekshiring."; }
+  };
+}
+</script>
+</body>
+</html>
